@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ArticleDTO: Encodable {
+struct ArticleDTO: Decodable {
     let author: String
     let title: String
     let description: String
@@ -15,7 +15,11 @@ struct ArticleDTO: Encodable {
     let content: String
     
     private enum CodingKeys: String, CodingKey {
+        case author
+        case title
+        case description
         case imageUrl = "urlToImage"
+        case content
     }
     
     func mapToArticle() -> Article {

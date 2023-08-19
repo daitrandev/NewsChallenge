@@ -15,6 +15,29 @@ final class URLSessionHTTPClient: HTTPClient {
     }
     
     func get(from url: URL) async throws -> [ArticleDTO] {
-        return []
+        try await withCheckedThrowingContinuation { continuation in
+            let request = URLRequest(url: url)
+            urlSession.dataTask(with: request) { data, response, error in
+                if let error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                if let data {
+                    do {
+                        let root = try JSONDecoder().decode(Root.self, from: data)
+                        continuation.resume(returning: root.articles)
+                    } catch {
+                        continuation.resume(throwing: error)
+                    }
+                    return
+                }
+                continuation.resume(throwing: NSError(domain: "Fetching Feed Error", code: -1))
+            }.resume()
+        }
     }
+}
+
+private struct Root: Decodable {
+    let articles: [ArticleDTO]
 }
