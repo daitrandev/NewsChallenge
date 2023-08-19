@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Article {
+public struct Article {
     let author: String
     let title: String
     let description: String
